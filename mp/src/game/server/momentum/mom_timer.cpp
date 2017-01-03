@@ -45,9 +45,11 @@ void CMomentumTimer::PostTime()
         TickSet::Tickrate tickRate = TickSet::GetCurrentTickrate();
 
         // Build URL
-        char webURL[512];
-        Q_snprintf(webURL, 512, "%s/postscore/%llu/%s/%i/%s", MOM_APIDOMAIN, steamID, map, ticks, tickRate.sType);
-
+        char webURL[BUFSIZ];
+        Q_snprintf(webURL, BUFSIZ, "%s/postscore/%llu/%s/%i/%s", MOM_APIDOMAIN, steamID, map, ticks, tickRate.sType);
+        // Here we encrypt the run file! But for now, the url is ok (Beta will change it)
+        SteamAPICall_t hSteamApiCall = steamapicontext->SteamUser()->RequestEncryptedAppTicket(webURL, BUFSIZ);
+        m_callEncryptedAppTicket.Set(hSteamApiCall, this, &CMomentumTimer::OnEncryptedAppTicketResponse);
         DevLog("Ticks sent to server: %i\n", ticks);
         // Build request
         // mom_UTIL->PostTime("run.momrec");
@@ -268,9 +270,8 @@ void CMomentumTimer::Stop(bool endTrigger /* = false */)
         SaveTimeToFile();
         // Post time to leaderboards if they're online
         // and if cheats haven't been turned on this session
-        // MOM_TODO: Post the time when ready
-        // if (SteamAPI_IsSteamRunning())
-        //    PostTime();
+        if (SteamAPI_IsSteamRunning())
+            PostTime();
     }
     else if (runSaveEvent) // reset run saved status to false if we cant or didn't save
     {
@@ -579,6 +580,27 @@ void CMomentumTimer::ClearStartMark()
     if (m_pStartZoneMark)
         delete m_pStartZoneMark;
     m_pStartZoneMark = nullptr;
+}
+
+void CMomentumTimer::OnEncryptedAppTicketResponse(EncryptedAppTicketResponse_t* pResult, bool bIOFailure)
+{
+    DevLog("Async response to encrypted ticket received!\n");
+    if (bIOFailure || !SteamAPI_IsSteamRunning())
+    {
+        DevMsg("Can't send the run securely to the server, panic!\n");
+        return;
+    }
+    
+    char result[BUFSIZ];
+    uint32 uencrypted;
+    steamapicontext->SteamUser()->GetEncryptedAppTicket(result, BUFSIZ, &uencrypted);
+    DevLog("Encryptation arrived\n");
+    for (size_t i = 0; i < BUFSIZ;++i)
+    {
+        DevLog("%c", result[i]);
+    }
+
+    // Send the ticket to the server
 }
 
 // Practice mode that stops the timer and allows the player to noclip.

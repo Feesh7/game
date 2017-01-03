@@ -45,6 +45,7 @@ class CMomentumTimer
           m_bWereCheatsActivated(false), m_bMapIsLinear(false), m_pStartTrigger(nullptr), m_pEndTrigger(nullptr),
           m_pCurrentCheckpoint(nullptr), m_pCurrentZone(nullptr), m_pLocalTimes(nullptr), m_pStartZoneMark(nullptr)
     {
+
     }
 
     //-------- HUD Messages --------------------
@@ -179,12 +180,15 @@ class CMomentumTimer
     Checkpoint *GetStartMark() const { return m_pStartZoneMark; }
     void ClearStartMark();
 
+    void OnEncryptedAppTicketResponse(EncryptedAppTicketResponse_t *pResult, bool bIOFailure);
+    CCallResult<CMomentumTimer, EncryptedAppTicketResponse_t> m_callEncryptedAppTicket;
   private:
     int m_iZoneCount;
     int m_iStartTick, m_iEndTick;
     int m_iLastZone;
     time_t m_iLastRunDate;
     bool m_bIsRunning;
+    // MOM_TODO: Make this actually useful. Achievement manager has a WereCheatsEverOn() that might also come handy
     bool m_bWereCheatsActivated;
     bool m_bMapIsLinear;
 
