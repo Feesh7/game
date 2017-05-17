@@ -95,4 +95,5 @@ class CMomentumGameMovement : public CGameMovement
   private:
     float m_flReflectNormal; // Used by rampboost fix
     CMomentumPlayer *m_pPlayer;
+    bool m_bIsGliding;
 };

@@ -15,6 +15,7 @@ RecvPropBool(RECVINFO(m_bHasPracticeMode)),
 RecvPropBool(RECVINFO(m_bUsingCPMenu)),
 RecvPropInt(RECVINFO(m_iCurrentStepCP)),
 RecvPropInt(RECVINFO(m_iCheckpointCount)),
+RecvPropBool(RECVINFO(m_bIsGliding)),
 RecvPropInt(RECVINFO(m_afButtonDisabled)),
 RecvPropDataTable(RECVINFO_DT(m_RunData), SPROP_PROXY_ALWAYS_YES, &REFERENCE_RECV_TABLE(DT_MOM_RunEntData)),
 RecvPropDataTable(RECVINFO_DT(m_RunStats), SPROP_PROXY_ALWAYS_YES, &REFERENCE_RECV_TABLE(DT_MOM_RunStats)),
@@ -32,6 +33,7 @@ C_MomentumPlayer::C_MomentumPlayer()
     m_RunData.m_bMapFinished = false;
     m_RunData.m_flLastJumpTime = 0.0f;
     m_bHasPracticeMode = false;
+    m_bIsGliding = false; // NEW GLIDE
     m_afButtonDisabled = 0;
     m_RunStats.Init();
 }

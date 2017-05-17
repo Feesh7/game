@@ -32,7 +32,7 @@ SendPropExclude("DT_BaseAnimating", "m_nMuzzleFlashParity"), SendPropInt(SENDINF
     SendPropBool(SENDINFO(m_bDidPlayerBhop)), SendPropInt(SENDINFO(m_iSuccessiveBhops)),
     SendPropBool(SENDINFO(m_bHasPracticeMode)), SendPropBool(SENDINFO(m_bUsingCPMenu)),
     SendPropInt(SENDINFO(m_iCurrentStepCP)), SendPropInt(SENDINFO(m_iCheckpointCount)),
-    SendPropInt(SENDINFO(m_afButtonDisabled)),
+    SendPropInt(SENDINFO(m_afButtonDisabled)), SendPropBool(SENDINFO(m_bIsGliding)),
     SendPropDataTable(SENDINFO_DT(m_RunData), &REFERENCE_SEND_TABLE(DT_MOM_RunEntData)),
     SendPropDataTable(SENDINFO_DT(m_RunStats), &REFERENCE_SEND_TABLE(DT_MOM_RunStats)),
 
@@ -85,6 +85,7 @@ CMomentumPlayer::CMomentumPlayer()
     m_bUsingCPMenu = false;
     m_iCurrentStepCP = -1;
 
+    m_bIsGliding = false; // NEW GLIDE
     Q_strncpy(m_pszDefaultEntName, GetEntityName().ToCStr(), sizeof m_pszDefaultEntName);
 
     ListenForGameEvent("mapfinished_panel_closed");
@@ -1023,4 +1024,9 @@ void CMomentumPlayer::StopSpectating()
     m_hObserverTarget.Set(nullptr);
     ForceRespawn();
     SetMoveType(MOVETYPE_WALK);
+}
+
+void CMomentumPlayer::ToggleGlide()
+{
+    m_bIsGliding = !m_bIsGliding;
 }

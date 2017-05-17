@@ -188,6 +188,7 @@ class CMomentumPlayer : public CBasePlayer, public CGameEventListener
     CNetworkVar(int, m_iCurrentStepCP);   // The current checkpoint the player is on
     CNetworkVar(bool, m_bUsingCPMenu);    // If this player is using the checkpoint menu or not
     CNetworkVar(int, m_iCheckpointCount); // How many checkpoints this player has
+    CNetworkVar(bool, m_bIsGliding); // NEW GLIDE
 
     // Gets the current menu checkpoint index
     int GetCurrentCPMenuStep() const { return m_iCurrentStepCP; }
@@ -219,6 +220,7 @@ class CMomentumPlayer : public CBasePlayer, public CGameEventListener
     void LoadCPsFromFile(KeyValues *kvFrom);
 
     void ToggleDuckThisFrame(bool bState);
+    void ToggleGlide();
 
     int &GetPerfectSyncTicks() { return m_nPerfectSyncTicks; }
     int &GetStrafeTicks() { return m_nStrafeTicks; }

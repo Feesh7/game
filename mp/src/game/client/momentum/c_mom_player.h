@@ -95,6 +95,8 @@ public:
     float m_flEndSpeed;
     int m_iSuccessiveBhops;
 
+    bool m_bIsGliding; // NEW GLIDE
+
 private:
     CountdownTimer m_ladderSurpressionTimer;
     Vector m_lastLadderNormal;

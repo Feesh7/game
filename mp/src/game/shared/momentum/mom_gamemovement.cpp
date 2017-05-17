@@ -18,7 +18,7 @@ static ConVar dispcoll_drawplane("dispcoll_drawplane", "0");
 static MAKE_CONVAR(mom_punchangle_enable, "0", FCVAR_ARCHIVE | FCVAR_REPLICATED, "Toggle landing punchangle. 0 = OFF, 1 = ON\n", 0, 9999);
 #endif
 
-CMomentumGameMovement::CMomentumGameMovement() : m_flReflectNormal(NO_REFL_NORMAL_CHANGE), m_pPlayer(nullptr) {}
+CMomentumGameMovement::CMomentumGameMovement() : m_flReflectNormal(NO_REFL_NORMAL_CHANGE), m_pPlayer(nullptr), m_bIsGliding(false) {}
 
 void CMomentumGameMovement::PlayerRoughLandingEffects(float fvol)
 {
@@ -937,6 +937,30 @@ void CMomentumGameMovement::AirMove(void)
     VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
 
     m_flReflectNormal = NO_REFL_NORMAL_CHANGE;
+
+    // Code for glide mode
+    /*if (!(mv->m_nOldButtons & IN_ATTACK2) && (mv->m_nButtons & IN_ATTACK2))
+    {
+        m_bIsGliding = !m_bIsGliding;
+    }*/
+
+    if (m_pPlayer->m_bIsGliding)
+    {
+        // Attempt to add lift
+        Vector relativelift;
+        Vector windvector = Vector(0.f, 0.f, 0.f);
+        VectorSubtract(mv->m_vecVelocity, windvector, relativelift);
+        vec_t liftC = -DotProduct(up, relativelift);
+        VectorMA(mv->m_vecVelocity, 0.05f*liftC*fabs(liftC)*gpGlobals->frametime, up, mv->m_vecVelocity);
+
+        // Check to see if we are now moving in the opposite direction. Do not allow this (causes oscillations)
+        VectorSubtract(mv->m_vecVelocity, windvector, relativelift);
+        vec_t liftnDelta = -DotProduct(up, relativelift);
+        if (Sign(liftC) != Sign(liftnDelta))
+        {
+            VectorMA(mv->m_vecVelocity, liftnDelta, up, mv->m_vecVelocity);
+        }
+    }
 
     TryPlayerMove();
 

@@ -170,6 +170,15 @@ CON_COMMAND_F(mom_checkpoint_close, "Closes the checkpoint menu.\n", FCVAR_CLIEN
     }
 }
 
+CON_COMMAND_F(mom_glide, "Toggle gliding.\n", FCVAR_CLIENTCMD_CAN_EXECUTE)
+{
+    CMomentumPlayer *pPlayer = ToCMOMPlayer(UTIL_GetLocalPlayer());
+    if (pPlayer)
+    {
+        pPlayer->ToggleGlide();
+    }
+}
+
 //Expose this to the DLL
 static CMOMCheckpointSystem s_MOMCheckpointSystem("MOMCheckpointSystem");
 CMOMCheckpointSystem *g_MOMCheckpointSystem = &s_MOMCheckpointSystem;
